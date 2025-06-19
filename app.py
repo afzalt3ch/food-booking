@@ -200,8 +200,8 @@ def daily_task():
     # Send Email
     msg = MIMEMultipart()
     msg['Subject'] = 'Daily Token Report'
-    msg['From'] = 'afzalhakkim11b@gmail.com'
-    msg['To'] = 'afzalhakkim666@gmail.com'
+    msg['From'] = 'youremail@gmail.com'
+    msg['To'] = 'youremail@gmail.com'
     
     with open("tokens.pdf", "rb") as f:
         attach = MIMEApplication(f.read(),_subtype="pdf")
@@ -210,15 +210,15 @@ def daily_task():
     
     with smtplib.SMTP('smtp.gmail.com', 587) as server:
         server.starttls()  # Secures the connection
-        server.login('afzalhakkim11b@gmail.com', 'your_app_password')  # Use App Password instead of normal password for Gmail
+        server.login('youremail@gmail.com', 'your_app_password')  # Use App Password instead of normal password for Gmail
         server.send_message(msg)
 
     # Send SMS using Twilio
     client = Client('your_twilio_account_sid', 'your_twilio_auth_token')
     client.messages.create(
         body=f"Total bookings today: {bookings_count}",
-        from_='+7306553870',  # Your Twilio number
-        to='+7994207908'  # Recipient's phone number
+        from_='+**********',  # Your Twilio number
+        to='+**********'  # Recipient's phone number
     )
 
 # app.py (Backend - Python/Flask)
@@ -282,14 +282,14 @@ def admin_page():
 # Function to send SMS
 def send_sms(to_number, message_body):
     # Twilio account details
-    account_sid = 'AC0ba65060d998de4316fd164ea6917263'
-    auth_token = '0e3740c13cc592ea5f7bc50fc8e37d7b'
+    account_sid = '****************************'
+    auth_token = '*************************'
     client = Client(account_sid, auth_token)
 
     # Send SMS
     message = client.messages.create(
         body=message_body,
-        from_='+17545475949',  # Your Twilio number
+        from_='+1************',  # Your Twilio number
         to=to_number                      # Receiver's phone number
     )
     return message.sid
@@ -363,8 +363,8 @@ def send_pdf_email():
     pdf.output(pdf_file)
 
     # Send email with PDF attached
-    sender_email = "ksathira3062@gmail.com"
-    sender_password = "dhym xjeh cepj ggus"
+    sender_email = "youremail@gmail.com"
+    sender_password = "**** **** **** ****"
     receiver_email = email
 
     msg = MIMEMultipart()
