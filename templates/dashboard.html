@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e3f2fd;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #1565c0;
+            font-size: 28px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #64b5f6;
+            padding-bottom: 10px;
+        }
+
+        .card {
+            background-color: #f0f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #90caf9;
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        h3 {
+            color: #1e88e5;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            font-size: 16px;
+            color: #546e7a;
+        }
+
+        .closed {
+            color: #e53935;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #1e88e5;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1565c0;
+            box-shadow: 0 4px 10px rgba(21, 101, 192, 0.3);
+        }
+
+        button:disabled {
+            background-color: #90a4ae;
+            cursor: not-allowed;
+        }
+
+        .token-list {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .token-list p {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background-color: #ffffff;
+            border-radius: 6px;
+            border: 1px solid #64b5f6;
+            font-size: 16px;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+
+        .token-list p:hover {
+            background-color: #e3f2fd;
+        }
+
+        .token-list p a {
+            color: #e53935;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .token-list p a:hover {
+            color: #b71c1c;
+        }
+        /* Timer Styling */
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #1e88e5;
+            color: white;
+            padding: 10px 20px;
+            font-size: 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Digital Timer -->
+    <div id="timer" class="timer"></div>
+
+    <div class="dashboard-container">
+        <h2>Welcome, {{ session.name }}</h2>
+
+        <!-- Booking Status Card -->
+        <div class="card">
+            <h3>{{ session.name }} - {{ session.department }}</h3>
+            <div class="button-container">
+                {% if is_booking_time %}
+                    {% if already_booked %}
+                        <button type="button" disabled>You have already booked a token for tomorrow</button>
+                    {% else %}
+                        <form action="/book" method="post">
+                            <button type="submit">Book Token</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <p class="closed">Booking Closed (Available 10 AM - 12 AM)</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Token List Card -->
+        <div class="card">
+            <h3>Your Tokens</h3>
+            <div class="token-list">
+                {% for token in user_tokens %}
+                    <p>
+                        Valid Date: {{ token[3] }}
+                        <a href="/delete/{{ token[0] }}">Delete</a>
+                    </p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+<script>
+// Function to calculate the countdown time
+    function updateTimer() {
+        const timerElement = document.getElementById('timer');
+        const now = new Date();
+        const currentTime = now.getTime();
+    
+        // Set the time for 10 AM and Midnight
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 10, 0, 0); // 10 AM today
+        const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0); // Midnight
+    
+        let timeLeft;
+    
+        // If current time is before 10 AM or after Midnight, show "Booking Closed"
+        if (currentTime < startOfDay.getTime()) {
+            timerElement.innerHTML = "Booking starts at 10 AM";
+            timeLeft = startOfDay - currentTime;
+        } else if (currentTime >= endOfDay.getTime()) {
+            timerElement.innerHTML = "Booking closed until next 10 AM";
+            timeLeft = startOfDay.getTime() + 86400000 - currentTime; // Next day's 10 AM
+        } else {
+            // Timer countdown from current time to Midnight
+            timeLeft = endOfDay.getTime() - currentTime;
+    
+            // Calculate hours, minutes, and seconds remaining
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+    
+            // Display the result
+            timerElement.innerHTML = `Booking ends in: ${hours}h ${minutes}m ${seconds}s`;
+        }
+    
+        // Update the countdown every second
+        setTimeout(updateTimer, 1000);
+    }
+    
+    // Start the timer when the page loads
+    updateTimer();
+    </script>
+</body>
+</html>

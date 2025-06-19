@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e3f2fd;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 30px;
+            color: #1565c0;
+            font-size: 24px;
+            border-bottom: 2px solid #64b5f6;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 0px;
+            padding-left: 5px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            transition: all 0.3s ease;
+            background-color: #f0f4f8;
+        }
+
+        input:focus {
+            border-color: #2196F3;
+            outline: none;
+            box-shadow: 0 0 8px rgba(33, 150, 243, 0.2);
+            background-color: white;
+        }
+
+        button {
+            background-color: #1e88e5;
+            color: white;
+            font-size: 16px;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1565c0;
+            box-shadow: 0 4px 10px rgba(21, 101, 192, 0.2);
+        }
+
+        .error {
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+
+        /* Admin Button Styling */
+        .admin-button {
+            margin-top: 20px;
+        }
+
+        .admin-button button {
+            background-color: transparent;
+            color: #2196F3;
+            border: 1px solid #2196F3;
+            font-size: 14px;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .admin-button button:hover {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        /* Registration Button Styling */
+        .register-button {
+            margin-top: 10px;
+        }
+
+        .register-button button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .register-button button:hover {
+            background-color: #388e3c;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Student Login</h2>
+
+        <!-- Error Message -->
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <!-- Login Form -->
+        <form action="/auth" method="post">
+            <div class="form-group">
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input type="date" name="password" placeholder="DOB" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+
+        <!-- Admin Login Button -->
+        <div class="admin-button">
+            <form action="/admin_auth" method="post">
+                <button type="submit">Admin Login</button>
+            </form>
+        </div>
+
+        <!-- Registration Button -->
+        <div class="register-button">
+            <form action="/register" method="get">
+                <button type="submit">Register as Student</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

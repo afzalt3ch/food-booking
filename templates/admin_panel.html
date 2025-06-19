@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        th {
+            background-color: #1976d2;
+            color: white;
+        }
+
+        td {
+            background-color: #f5f5f5;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #1e88e5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button.reject {
+            background-color: red;
+        }
+
+        #student-details {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        a {
+            color: #1976d2;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Admin Panel - Verify Students</h2>
+
+    <!-- Table displaying unverified students -->
+    <table id="students-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Department</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in unverified_students %}
+            <tr id="student-{{ student[0] }}" onclick="showStudentDetails('{{ student[0] }}', '{{ student[1] }}', '{{ student[2] }}', '{{ student[3] }}', '{{ student[4] }}')">
+                <td>{{ student[1] }}</td>
+                <td>{{ student[2] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Student Details Section -->
+    <div id="student-details">
+        <h3>Student Details</h3>
+        <p><strong>Name:</strong> <span id="student-name"></span></p>
+        <p><strong>Department:</strong> <span id="student-department"></span></p>
+        <p><strong>Date of Birth:</strong> <span id="student-dob"></span></p>
+
+        <!-- BPL Certificate Link -->
+        <p><strong>BPL Certificate:</strong> <a id="student-certificate" href="#" target="_blank">View Certificate</a></p>
+        
+        <!-- Uploaded Image -->
+        <img id="student-image" src="" alt="Uploaded Image">
+
+        <!-- Verify Student Button -->
+        <form id="verify-form" action="" method="POST" style="display:inline-block;">
+            <button type="submit">Verify</button>
+        </form>
+
+        <!-- Reject Student Button -->
+        <form id="reject-form" action="" method="POST" style="display:inline-block; margin-left: 10px;">
+            <button type="submit" class="reject">Reject</button>
+        </form>
+
+    </div>
+
+    <!-- JavaScript for showing student details -->
+    <script>
+        function showStudentDetails(id, name, department, dob, certificate) {
+        // Display student details
+        document.getElementById('student-details').style.display = 'block';
+        document.getElementById('student-name').innerText = name;
+        document.getElementById('student-department').innerText = department;
+        document.getElementById('student-dob').innerText = dob;
+
+        const sanitizedCertificate = name.toLowerCase().replace(/[^a-zA-Z0-9.\-_]/g, '_') + '_bpl.' + certificate.split('.').pop();
+        const fullCertificatePath = `/static/uploads/${sanitizedCertificate}`;
+
+        // Set certificate link and image
+        document.getElementById('student-certificate').href = fullCertificatePath;
+        document.getElementById('student-image').src = fullCertificatePath;
+
+        // Set the form action URLs
+        document.getElementById('verify-form').action = `/verify_student/${id}`;
+        document.getElementById('reject-form').action = `/reject_student/${id}`;
+    }
+
+
+    </script>
+
+</body>
+</html>
